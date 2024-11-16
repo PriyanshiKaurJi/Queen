@@ -3,7 +3,7 @@ const handlerCheckDB = require("./handlerCheckData.js");
 const bollywoodDialogues = [
     { text: "Kabhi kabhi jeetne ke liye kuch haarna bhi padta hai.", author: "Priyanshi Kaur" },
     { text: "Ek baar jo maine commitment kar di, toh main apne aap ki bhi nahi sunta.", author: "Priyanshi Kaur" },
-    { text: "Don ko pakadna mushkil hi nahi, namumkin hai.", author: "Don" },
+    { text: "Don ko pakadna mushkil hi nahi, namumkin hai.", author: "Priyanshi Kaur" },
     { text: "Picture abhi baaki hai mere dost.", author: "Priyanshi Kaur" },
     { text: "Main apni favorite hoon!", author: "Priyanshi Kaur" },
     { text: "Haar kar jeetne wale ko baazigar kehte hai.", author: "Priyanshi Kaur" },
