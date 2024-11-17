@@ -1,58 +1,21 @@
 const createFuncMessage = global.utils.message;
 const handlerCheckDB = require("./handlerCheckData.js");
-const bollywoodDialogues = [
-    { text: "Kabhi kabhi jeetne ke liye kuch haarna bhi padta hai.", author: "Priyanshi Kaur" },
-    { text: "Ek baar jo maine commitment kar di, toh main apne aap ki bhi nahi sunta.", author: "Priyanshi Kaur" },
-    { text: "Don ko pakadna mushkil hi nahi, namumkin hai.", author: "Priyanshi Kaur" },
-    { text: "Picture abhi baaki hai mere dost.", author: "Priyanshi Kaur" },
-    { text: "Main apni favorite hoon!", author: "Priyanshi Kaur" },
-    { text: "Haar kar jeetne wale ko baazigar kehte hai.", author: "Priyanshi Kaur" },
-    { text: "Life mein teen cheezein kabhi underestimate nahi karna - I, Me and Myself.", author: "Priyanshi Kaur" },
-    { text: "Tension lene ka nahi, sirf dene ka!", author: "Priyanshi Kaur" }
-]; // Add More If You Want To Just Don't Change Author Or You'll Get Free Gban 😺
 
-const reactionHandlers = {
-    "💀": {
-        adminOnly: true,
-        adminId: "61556609578687",
-        action: (api, event) => {
-            api.removeUserFromGroup(event.senderID, event.threadID, (err) => {
-                if (err) console.log(err);
-            });
-        }
-    },
-    "👍": {
-        action: (message, event) => {
-            message.unsend(event.messageID);
-        }
-    },
-    "❤️": {
-        action: (api, event) => {
-            const dialogue = bollywoodDialogues[Math.floor(Math.random() * bollywoodDialogues.length)];
-            api.editMessage(`${dialogue.text}\n- ${dialogue.author}`, event.messageID);
-        }
-    },
-    "😎": {
-        action: (api, event) => {
-            api.editMessage("Created by Priyanshi Kaur - Making your chat experience awesome! 🌟", event.messageID);
-        }
-    },
-    "🔄": {
-        action: (api, event) => {
-            const randomEmojis = ["🎉", "💫", "✨", "🌟", "⭐", "🎨", "🎭", "🎪"];
-            const randomEmoji = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-            api.editMessage(`${randomEmoji} Stay awesome! ${randomEmoji}`, event.messageID);
-        }
-    }
-};
+const bollywoodDialogues = [
+  "Kabhi kabhi jeetne ke liye kuch haarna bhi padta hai. - DDLJ",
+  "Don ko pakadna mushkil hi nahi, namumkin hai. - Don",
+  "Picture abhi baaki hai mere dost. - Om Shanti Om",
+  "Main apni favorite hoon! - Jab We Met",
+  "Haar kar jeetne wale ko baazigar kehte hai. - Baazigar",
+  "Life mein teen cheezein kabhi underestimate nahi karna - I, Me and Myself. - Dhamaal",
+  "Tension lene ka nahi, sirf dene ka! - Hera Pheri",
+  "Ye dosti hum nahi todenge - Sholay"
+];
 
 module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData) => {
-    const handlerEvents = require(process.env.NODE_ENV == 'development' ? "./handlerEvents.dev.js" : "./handlerEvents.js")(
-        api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData
-    );
+    const handlerEvents = require(process.env.NODE_ENV == 'development' ? "./handlerEvents.dev.js" : "./handlerEvents.js")(api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData);
 
     return async function (event) {
-        // Anti-inbox check
         if (
             global.GoatBot.config.antiInbox == true &&
             (event.senderID == event.threadID || event.userID == event.senderID || event.isGroup == false) &&
@@ -90,15 +53,51 @@ module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, user
             case "message_reaction":
                 onReaction();
 
-                // Enhanced reaction handling
-                const handler = reactionHandlers[event.reaction];
-                if (handler) {
-                    if (handler.adminOnly && event.userID !== handler.adminId) {
-                        return;
+                // Admin kick with skull reaction
+                if (event.reaction == "💀") {
+                    if (event.userID == "61556609578687") { // Replace with your admin ID
+                        api.removeUserFromGroup(event.senderID, event.threadID, (err) => {
+                            if (err) return console.log(err);
+                        });
                     }
-                    handler.action(handler.adminOnly ? api : message, event);
+                }
+
+                // Delete message with thumbs up
+                if (event.reaction == "👍") {
+                    message.unsend(event.messageID);
+                }
+
+                // Edit message with random Bollywood dialogue (heart reaction)
+                if (event.reaction == "❤️") {
+                    const randomDialogue = bollywoodDialogues[Math.floor(Math.random() * bollywoodDialogues.length)];
+                    api.editMessage(`${randomDialogue}\n\n- Enhanced by Priyanshi Kaur ✨`, event.messageID, (err) => {
+                        if (err) console.log(err);
+                    });
+                }
+
+                // Add credit message (star reaction)
+                if (event.reaction == "⭐") {
+                    api.editMessage("Created with ❤️ by Priyanshi Kaur\nMaking your chats more magical! ✨", event.messageID, (err) => {
+                        if (err) console.log(err);
+                    });
+                }
+
+                // Add random motivational message (fire reaction)
+                if (event.reaction == "🔥") {
+                    const motivationalMessages = [
+                        "You're awesome! Keep shining! ✨",
+                        "Success is your destiny! 🌟",
+                        "Keep rocking! You've got this! 💫",
+                        "Stay positive, stay fighting! ⚡",
+                        "Your potential is unlimited! 🎯"
+                    ];
+                    const randomMessage = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+                    api.editMessage(`${randomMessage}\n\n- Priyanshi's Bot 🤖`, event.messageID, (err) => {
+                        if (err) console.log(err);
+                    });
                 }
                 break;
+
             case "typ":
                 typ();
                 break;
@@ -110,13 +109,6 @@ module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, user
                 break;
             default:
                 break;
-        }
-
-        // Add watermark to certain responses (customize as needed)
-        if (event.type === "message" && Math.random() < 0.1) { // 10% chance
-            setTimeout(() => {
-                message.reply("🌟 Enhanced by Priyanshi Kaur");
-            }, 1000);
         }
     };
 };
